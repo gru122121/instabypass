@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    
+    <meta property="og:title" content="Your Title">
+    <meta property="og:description" content="Your Description">
+    <meta property="og:url" content="https://instabypass.vercel.app/">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://instabypass.vercel.app/",
+      "name": "xxxxxxxx"
+    }
+    </script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -38,7 +53,6 @@
             };
 
             const getCurrentUrl = () => {
-                // Remove any fbclid or other tracking parameters
                 const url = new URL(window.location.href);
                 url.searchParams.delete('fbclid');
                 return url.toString();
@@ -50,17 +64,9 @@
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        // For iOS, use x-web-search with cache prefix
+                        // Use the exact format mentioned: x-web-search://cache:URL
                         window.location.href = `x-web-search://cache:${currentUrl}`;
-                        
-                        // Fallback after a short delay if the first attempt fails
-                        setTimeout(() => {
-                            if (!document.hidden) {
-                                window.location.href = currentUrl.replace('https://', 'safari-https://');
-                            }
-                        }, 500);
                     } else if (browserInfo.isAndroid && browserInfo.isChrome) {
-                        // For Android with Chrome
                         window.location.href = `googlechrome://navigate?url=${encodeURIComponent(currentUrl)}`;
                     }
                 }
