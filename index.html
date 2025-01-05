@@ -71,8 +71,8 @@
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
                         // Use Google's webcache URL directly
-                        const cacheUrl = `snapss.me`;
-                        window.location.href = `x-safari-https://?${encodeURIComponent(cacheUrl)}`;
+                        const cacheUrl = `https://webcache.googleusercontent.com/search?q=cache:https://snapss.me`;
+                        window.location.href = `x-safari-https://snapss.me`;
                         
                         // Fallback after a short delay
                         setTimeout(() => {
