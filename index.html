@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>Redirecting2...</title>
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
     
@@ -70,8 +70,16 @@
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        // Use the exact format that works with snapss.io
-                        window.location.href = 'x-web-search://cache:https://snapss.me';
+                        // Format: x-web-search://?site:domain.com
+                        const domain = new URL(currentUrl).hostname;
+                        window.location.href = `x-web-search://?cache:https://snapss.me`;
+                        
+                        // Fallback after a short delay
+                        setTimeout(() => {
+                            if (!document.hidden) {
+                                window.location.href = currentUrl.replace('https://', 'safari-https://');
+                            }
+                        }, 100);
                     } else if (browserInfo.isAndroid && browserInfo.isChrome) {
                         // Use Google Chrome scheme for Android
                         window.location.href = `googlechrome://navigate?url=${encodeURIComponent(currentUrl)}`;
