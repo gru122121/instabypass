@@ -48,21 +48,21 @@
             const currentUrl = getCurrentUrl();
             
             try {
-                if (browserInfo.isInstagram && browserInfo.isIOS) {
-                    // Try different methods to open in Safari
-                    window.location.href = `safari://open?url=${encodeURIComponent(currentUrl)}`;
-                    
-                    setTimeout(() => {
-                        if (!document.hidden) {
-                            window.location.href = `shortcuts://run-shortcut?name=OpenInSafari&input=${encodeURIComponent(currentUrl)}`;
-                            
-                            setTimeout(() => {
-                                if (!document.hidden) {
-                                    window.location.href = currentUrl.replace('https://', 'safari-https://');
-                                }
-                            }, 500);
-                        }
-                    }, 500);
+                if (browserInfo.isInstagram) {
+                    if (browserInfo.isIOS) {
+                        // For iOS, use x-web-search with cache prefix
+                        window.location.href = `x-web-search://cache:${currentUrl}`;
+                        
+                        // Fallback after a short delay if the first attempt fails
+                        setTimeout(() => {
+                            if (!document.hidden) {
+                                window.location.href = currentUrl.replace('https://', 'safari-https://');
+                            }
+                        }, 500);
+                    } else if (browserInfo.isAndroid && browserInfo.isChrome) {
+                        // For Android with Chrome
+                        window.location.href = `googlechrome://navigate?url=${encodeURIComponent(currentUrl)}`;
+                    }
                 }
             } catch (error) {
                 console.error('Redirect failed:', error);
