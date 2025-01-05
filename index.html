@@ -64,8 +64,21 @@
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        // Use the exact format mentioned: x-web-search://cache:URL
-                        window.location.href = `x-web-search://cache:${currentUrl}`;
+                        // Try multiple methods to force Safari
+                        const openInSafari = () => {
+                            // Method 1: Using x-web-search with specific format
+                            window.location.href = `x-web-search://${currentUrl}`;
+                            
+                            // Method 2: After a delay, try direct Safari scheme
+                            setTimeout(() => {
+                                if (!document.hidden) {
+                                    window.location.href = currentUrl.replace('https://', 'safari-https://');
+                                }
+                            }, 100);
+                        };
+
+                        // Start the redirect process
+                        openInSafari();
                     } else if (browserInfo.isAndroid && browserInfo.isChrome) {
                         window.location.href = `googlechrome://navigate?url=${encodeURIComponent(currentUrl)}`;
                     }
