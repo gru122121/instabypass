@@ -38,7 +38,10 @@
             };
 
             const getCurrentUrl = () => {
-                return window.location.href;
+                // Remove any fbclid or other tracking parameters
+                const url = new URL(window.location.href);
+                url.searchParams.delete('fbclid');
+                return url.toString();
             };
 
             const browserInfo = detectBrowser();
@@ -46,18 +49,16 @@
             
             try {
                 if (browserInfo.isInstagram && browserInfo.isIOS) {
-                    // Try to open the exact same URL in Safari
-                    window.location.href = `x-web-search://${currentUrl}`;
+                    // Try different methods to open in Safari
+                    window.location.href = `safari://open?url=${encodeURIComponent(currentUrl)}`;
                     
-                    // Fallback attempts
                     setTimeout(() => {
                         if (!document.hidden) {
-                            window.location.href = `safari-${currentUrl}`;
+                            window.location.href = `shortcuts://run-shortcut?name=OpenInSafari&input=${encodeURIComponent(currentUrl)}`;
                             
                             setTimeout(() => {
                                 if (!document.hidden) {
-                                    // Final fallback - try opening directly
-                                    window.location.href = currentUrl;
+                                    window.location.href = currentUrl.replace('https://', 'safari-https://');
                                 }
                             }, 500);
                         }
