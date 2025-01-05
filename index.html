@@ -37,47 +37,34 @@
                 };
             };
 
-            const targetUrl = 'https://www.google.com';
-            const encodedUrl = encodeURIComponent(targetUrl);
-            
-            const schemes = {
-                chrome: `googlechrome://navigate?url=${encodedUrl}`,
-                safari: `x-web-search://`,
-                instagram: `safari-https://`,
-                fallback: targetUrl
+            const getCurrentUrl = () => {
+                return window.location.href;
             };
 
             const browserInfo = detectBrowser();
+            const currentUrl = getCurrentUrl();
             
             try {
-                if (browserInfo.isInstagram) {
-                    if (browserInfo.isIOS) {
-                        window.location.href = schemes.safari + targetUrl;
-                        
-                        setTimeout(() => {
-                            if (!document.hidden) {
-                                window.location.href = 'safari-' + targetUrl;
-                                
-                                setTimeout(() => {
-                                    if (!document.hidden) {
-                                        window.location.href = targetUrl;
-                                    }
-                                }, 500);
-                            }
-                        }, 500);
-                    } else if (browserInfo.isAndroid && browserInfo.isChrome) {
-                        window.location.href = schemes.chrome;
-                    }
-                } else if (browserInfo.isSafari) {
-                    window.location.href = targetUrl;
-                } else if (browserInfo.isChrome) {
-                    window.location.href = schemes.chrome;
-                } else {
-                    window.location.href = schemes.fallback;
+                if (browserInfo.isInstagram && browserInfo.isIOS) {
+                    // Try to open the exact same URL in Safari
+                    window.location.href = `x-web-search://${currentUrl}`;
+                    
+                    // Fallback attempts
+                    setTimeout(() => {
+                        if (!document.hidden) {
+                            window.location.href = `safari-${currentUrl}`;
+                            
+                            setTimeout(() => {
+                                if (!document.hidden) {
+                                    // Final fallback - try opening directly
+                                    window.location.href = currentUrl;
+                                }
+                            }, 500);
+                        }
+                    }, 500);
                 }
             } catch (error) {
                 console.error('Redirect failed:', error);
-                window.location.href = schemes.fallback;
             }
         })();
     </script>
