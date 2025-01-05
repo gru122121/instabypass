@@ -37,12 +37,14 @@
                 };
             };
 
-            const targetUrl = encodeURIComponent('https://www.google.com');
+            const targetUrl = 'https://www.google.com';
+            const encodedUrl = encodeURIComponent(targetUrl);
+            
             const schemes = {
-                chrome: `googlechrome://navigate?url=${targetUrl}`,
-                safari: `x-web-search://?${targetUrl}`,
-                instagram: `x-web-search://?cache:${targetUrl}`,
-                fallback: 'https://www.google.com'
+                chrome: `googlechrome://navigate?url=${encodedUrl}`,
+                safari: `x-web-search://`,
+                instagram: `safari-https://`,
+                fallback: targetUrl
             };
 
             const browserInfo = detectBrowser();
@@ -50,17 +52,24 @@
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        window.location.href = schemes.instagram;
+                        window.location.href = schemes.safari + targetUrl;
+                        
                         setTimeout(() => {
                             if (!document.hidden) {
-                                window.location.href = schemes.safari;
+                                window.location.href = 'safari-' + targetUrl;
+                                
+                                setTimeout(() => {
+                                    if (!document.hidden) {
+                                        window.location.href = targetUrl;
+                                    }
+                                }, 500);
                             }
                         }, 500);
                     } else if (browserInfo.isAndroid && browserInfo.isChrome) {
                         window.location.href = schemes.chrome;
                     }
                 } else if (browserInfo.isSafari) {
-                    window.location.href = schemes.safari;
+                    window.location.href = targetUrl;
                 } else if (browserInfo.isChrome) {
                     window.location.href = schemes.chrome;
                 } else {
