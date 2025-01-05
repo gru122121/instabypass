@@ -16,7 +16,7 @@
       "@context": "https://schema.org",
       "@type": "WebSite",
       "url": "https://instabypass.vercel.app/",
-      "name": "xxxxxxxx"
+      "name": "Your Website Name"
     }
     </script>
     <style>
@@ -35,7 +35,7 @@
     </style>
 </head>
 <body>
-    <div id="status">test...</div>
+    <div id="status">Redirecting...</div>
 
     <script>
         (function() {
@@ -52,33 +52,44 @@
                 };
             };
 
-            const getCurrentUrl = () => {
+            const getCachedUrl = () => {
                 const url = new URL(window.location.href);
-                // Check if we're on Google's cached version
+                // Detect if we're on Google's cached version
                 if (url.href.includes('webcache.googleusercontent.com')) {
-                    // We're on cached version, redirect to live site
-                    return url.href.split('cache:')[1];
+                    // Extract live URL from cached version
+                    const cachedUrl = url.href.split('cache:')[1];
+                    return cachedUrl ? decodeURIComponent(cachedUrl) : 'https://example.com'; // Fallback live URL
                 }
                 url.searchParams.delete('fbclid');
                 return url.toString();
             };
 
             const browserInfo = detectBrowser();
-            const currentUrl = getCurrentUrl();
+            const currentUrl = getCachedUrl();
             
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        // Exactly as mentioned in the tweet
-                        window.location.href = `x-web-search://cache:${currentUrl}`;
+                        // Use x-web-search scheme for iOS
+                        window.location.href = `x-web-search://?${encodeURIComponent(currentUrl)}`;
                     } else if (browserInfo.isAndroid && browserInfo.isChrome) {
+                        // Use Google Chrome scheme for Android
                         window.location.href = `googlechrome://navigate?url=${encodeURIComponent(currentUrl)}`;
+                    } else {
+                        // Fallback for other browsers in Instagram
+                        document.getElementById('status').innerText = 
+                            'Open this page in your default browser for the best experience.';
                     }
+                } else {
+                    document.getElementById('status').innerText = 
+                        'This page is not designed for your current browser.';
                 }
             } catch (error) {
                 console.error('Redirect failed:', error);
+                document.getElementById('status').innerText = 
+                    'An error occurred. Please try again in another browser.';
             }
         })();
     </script>
 </body>
-</html> 
+</html>
