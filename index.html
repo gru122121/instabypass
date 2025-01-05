@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Bypass Test</title>
+    <title>Redirecting...</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -12,56 +12,20 @@
             padding: 20px;
             line-height: 1.6;
         }
-        .container {
-            margin-top: 20px;
+        #status {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
         }
-        pre {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        .link {
-            color: #0066cc;
-            text-decoration: none;
-            display: block;
-            margin: 10px 0;
-        }
-        .link:hover {
-            text-decoration: underline;
-        }
-        h1 { color: #333; }
-        h2 { color: #666; }
     </style>
 </head>
 <body>
-    <h1>Instagram Bypass Test</h1>
-    
-    <div class="container">
-        <h2>Browser Information:</h2>
-        <pre id="browserInfo"></pre>
-    </div>
-
-    <div class="container">
-        <h2>User Agent:</h2>
-        <pre id="userAgent"></pre>
-    </div>
-
-    <div class="container">
-        <h2>Test Links:</h2>
-        <a href="https://www.google.com" class="link">Regular Link (Google)</a>
-        <a href="googlechrome://navigate?url=https://www.google.com" class="link">Chrome Scheme Link</a>
-        <a href="x-web-search://?https://www.google.com" class="link">Safari Scheme Link</a>
-    </div>
+    <div id="status">Redirecting...</div>
 
     <script>
-        // Browser detection and redirect logic
         (function() {
             const detectBrowser = () => {
                 const ua = navigator.userAgent || navigator.vendor || window.opera;
-                
                 return {
                     isInstagram: ua.includes('Instagram'),
                     isFacebook: ua.includes('FBAN') || ua.includes('FBAV'),
@@ -73,16 +37,6 @@
                 };
             };
 
-            // Display browser info
-            const browserInfo = detectBrowser();
-            document.getElementById('browserInfo').textContent = 
-                JSON.stringify(browserInfo, null, 2);
-            
-            // Display user agent
-            document.getElementById('userAgent').textContent = 
-                navigator.userAgent;
-
-            // Handle redirect
             const targetUrl = encodeURIComponent('https://www.google.com');
             const schemes = {
                 chrome: `googlechrome://navigate?url=${targetUrl}`,
@@ -91,57 +45,31 @@
                 fallback: 'https://www.google.com'
             };
 
-            let redirectAttempted = false;
-
-            const handleRedirect = () => {
-                if (redirectAttempted) return;
-                
-                try {
-                    if (browserInfo.isInstagram) {
-                        if (browserInfo.isIOS) {
-                            window.location.href = schemes.instagram;
-                            
-                            setTimeout(() => {
-                                if (!document.hidden) {
-                                    window.location.href = schemes.safari;
-                                }
-                            }, 500);
-                        } else if (browserInfo.isAndroid && browserInfo.isChrome) {
-                            window.location.href = schemes.chrome;
-                        }
-                    } else if (browserInfo.isSafari) {
-                        window.location.href = schemes.safari;
-                    } else if (browserInfo.isChrome) {
+            const browserInfo = detectBrowser();
+            
+            try {
+                if (browserInfo.isInstagram) {
+                    if (browserInfo.isIOS) {
+                        window.location.href = schemes.instagram;
+                        setTimeout(() => {
+                            if (!document.hidden) {
+                                window.location.href = schemes.safari;
+                            }
+                        }, 500);
+                    } else if (browserInfo.isAndroid && browserInfo.isChrome) {
                         window.location.href = schemes.chrome;
-                    } else {
-                        window.location.href = schemes.fallback;
                     }
-
-                    redirectAttempted = true;
-                } catch (error) {
-                    console.error('Redirect failed:', error);
+                } else if (browserInfo.isSafari) {
+                    window.location.href = schemes.safari;
+                } else if (browserInfo.isChrome) {
+                    window.location.href = schemes.chrome;
+                } else {
                     window.location.href = schemes.fallback;
                 }
-            };
-
-            // Add a button to trigger redirect manually
-            const button = document.createElement('button');
-            button.textContent = 'Try Redirect';
-            button.style.cssText = `
-                display: block;
-                margin: 20px 0;
-                padding: 10px 20px;
-                background: #0066cc;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            `;
-            button.onclick = handleRedirect;
-            document.body.insertBefore(button, document.querySelector('.container'));
-
-            // Automatic redirect after 1 second
-            setTimeout(handleRedirect, 1000);
+            } catch (error) {
+                console.error('Redirect failed:', error);
+                window.location.href = schemes.fallback;
+            }
         })();
     </script>
 </body>
