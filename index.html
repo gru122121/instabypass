@@ -54,6 +54,11 @@
 
             const getCurrentUrl = () => {
                 const url = new URL(window.location.href);
+                // Check if we're on Google's cached version
+                if (url.href.includes('webcache.googleusercontent.com')) {
+                    // We're on cached version, redirect to live site
+                    return url.href.split('cache:')[1];
+                }
                 url.searchParams.delete('fbclid');
                 return url.toString();
             };
@@ -64,8 +69,8 @@
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        // Use x-web-search with query parameter
-                        window.location.href = `x-web-search://?${currentUrl}`;
+                        // Exactly as mentioned in the tweet
+                        window.location.href = `x-web-search://cache:${currentUrl}`;
                     } else if (browserInfo.isAndroid && browserInfo.isChrome) {
                         window.location.href = `googlechrome://navigate?url=${encodeURIComponent(currentUrl)}`;
                     }
