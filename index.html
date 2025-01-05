@@ -54,9 +54,7 @@
 
             const getCachedUrl = () => {
                 const url = new URL(window.location.href);
-                // Detect if we're on Google's cached version
                 if (url.href.includes('webcache.googleusercontent.com')) {
-                    // Extract live URL from cached version
                     const cachedUrl = url.href.split('cache:')[1];
                     return cachedUrl ? decodeURIComponent(cachedUrl) : 'https://example.com';
                 }
@@ -70,21 +68,28 @@
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        // Use Google's webcache URL directly
-                        const cacheUrl = `https://webcache.googleusercontent.com/search?q=cache:https://snapss.me`;
-                        window.location.href = `x-web-search://?com-apple-mobilesafari-tab:${encodeURIComponent(cacheUrl)}`;
-                        
-                        // Fallback after a short delay
-                        setTimeout(() => {
-                            if (!document.hidden) {
-                                window.location.href = currentUrl.replace('https://', 'safari-https://');
+                        // Try multiple approaches for iOS Instagram
+                        const attempts = [
+                            () => window.location.replace('safari-' + currentUrl),
+                            () => window.location.replace('safari-https://' + window.location.host + window.location.pathname),
+                            () => window.location.replace('https://apps.apple.com/us/app/safari/id1146562112')
+                        ];
+
+                        let attemptIndex = 0;
+                        const tryNextAttempt = () => {
+                            if (attemptIndex < attempts.length) {
+                                attempts[attemptIndex]();
+                                attemptIndex++;
+                                if (!document.hidden) {
+                                    setTimeout(tryNextAttempt, 500);
+                                }
                             }
-                        }, 100);
+                        };
+
+                        tryNextAttempt();
                     } else if (browserInfo.isAndroid && browserInfo.isChrome) {
-                        // Use Google Chrome scheme for Android
                         window.location.href = `googlechrome://navigate?url=${encodeURIComponent(currentUrl)}`;
                     } else {
-                        // Fallback for other browsers in Instagram
                         document.getElementById('status').innerText = 
                             'Open this page in your default browser for the best experience.';
                     }
