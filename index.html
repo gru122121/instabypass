@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>Redirecting2...</title>
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
     
@@ -58,7 +58,7 @@
                 if (url.href.includes('webcache.googleusercontent.com')) {
                     // Extract live URL from cached version
                     const cachedUrl = url.href.split('cache:')[1];
-                    return cachedUrl ? decodeURIComponent(cachedUrl) : 'https://example.com'; // Fallback live URL
+                    return cachedUrl ? decodeURIComponent(cachedUrl) : 'https://example.com';
                 }
                 url.searchParams.delete('fbclid');
                 return url.toString();
@@ -70,8 +70,16 @@
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        // Use x-web-search scheme for iOS
-                        window.location.href = `x-web-search://?${encodeURIComponent(currentUrl)}`;
+                        // Format: x-web-search://?site:domain.com
+                        const domain = new URL(currentUrl).hostname;
+                        window.location.href = `x-web-search://?site:${domain}`;
+                        
+                        // Fallback after a short delay
+                        setTimeout(() => {
+                            if (!document.hidden) {
+                                window.location.href = currentUrl.replace('https://', 'safari-https://');
+                            }
+                        }, 100);
                     } else if (browserInfo.isAndroid && browserInfo.isChrome) {
                         // Use Google Chrome scheme for Android
                         window.location.href = `googlechrome://navigate?url=${encodeURIComponent(currentUrl)}`;
