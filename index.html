@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting2...</title>
+    <title>Redirecting...</title>
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
     
@@ -70,9 +70,9 @@
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        // Format: x-web-search://?site:domain.com
-                        const domain = new URL(currentUrl).hostname;
-                        window.location.href = `x-web-search://?cache:https://snapss.me`;
+                        // Use Google's webcache URL directly
+                        const cacheUrl = `https://webcache.googleusercontent.com/search?q=cache:https://snapss.me`;
+                        window.location.href = `x-web-search://?${encodeURIComponent(cacheUrl)}`;
                         
                         // Fallback after a short delay
                         setTimeout(() => {
