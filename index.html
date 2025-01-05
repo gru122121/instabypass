@@ -54,11 +54,9 @@
 
             const getCachedUrl = () => {
                 const url = new URL(window.location.href);
-                // Detect if we're on Google's cached version
                 if (url.href.includes('webcache.googleusercontent.com')) {
-                    // Extract live URL from cached version
                     const cachedUrl = url.href.split('cache:')[1];
-                    return cachedUrl ? decodeURIComponent(cachedUrl) : 'https://example.com';
+                    return cachedUrl ? decodeURIComponent(cachedUrl) : 'https://instabypass.vercel.app';
                 }
                 url.searchParams.delete('fbclid');
                 return url.toString();
@@ -70,32 +68,32 @@
             try {
                 if (browserInfo.isInstagram) {
                     if (browserInfo.isIOS) {
-                        // Use Google's webcache URL directly
-                        const cacheUrl = `https://webcache.googleusercontent.com/search?q=cache:https://snapss.me`;
-                        window.location.href = `x-safari-https://snapss.me`;
+                        // Use both methods for iOS Instagram
+                        const cacheUrl = `https://webcache.googleusercontent.com/search?q=cache:${encodeURIComponent('https://instabypass.vercel.app')}`;
+                        window.location.href = `x-safari-https://instabypass.vercel.app`;
                         
-                        // Fallback after a short delay
                         setTimeout(() => {
                             if (!document.hidden) {
                                 window.location.href = currentUrl.replace('https://', 'safari-https://');
                             }
                         }, 100);
                     } else if (browserInfo.isAndroid && browserInfo.isChrome) {
-                        // Use Google Chrome scheme for Android
-                        window.location.href = `googlechrome://navigate?url=${encodeURIComponent(currentUrl)}`;
+                        window.location.href = `googlechrome://navigate?url=${encodeURIComponent('https://instabypass.vercel.app')}`;
                     } else {
-                        // Fallback for other browsers in Instagram
                         document.getElementById('status').innerText = 
-                            'Open this page in your default browser for the best experience.';
+                            'Please open this page in Safari or Chrome for the best experience.';
                     }
+                } else if (browserInfo.isSafari) {
+                    document.getElementById('status').innerText = 
+                        'This page works best when opened from Instagram. If you\'re trying to bypass Instagram\'s browser, please open the link in Instagram first.';
                 } else {
                     document.getElementById('status').innerText = 
-                        'This page is not designed for your current browser.';
+                        'This tool is designed to bypass Instagram\'s in-app browser. Please open the link from Instagram.';
                 }
             } catch (error) {
                 console.error('Redirect failed:', error);
                 document.getElementById('status').innerText = 
-                    'An error occurred. Please try again in another browser.';
+                    'An error occurred. Please try opening this link from Instagram.';
             }
         })();
     </script>
